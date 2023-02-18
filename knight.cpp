@@ -1,5 +1,5 @@
 #include "knight.h"
-int number_of_events,isTiny=-1,isFrog=-1,currentLevel;
+int number_of_events,isTiny=-1,isFrog=-1,currentLevel,MaxHP;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -9,6 +9,21 @@ void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int
          << ", phoenixdown=" << phoenixdown
          << ", rescue=" << rescue << endl;
 }
+bool isPrime(int n){
+    bool p[1600];
+    for(int i=0; i<=1600; i++){
+        p[i]=1;
+    }
+    p[1]=0;
+    p[0]=0;
+    for(int i=2; i<=400; i++){
+        if(p[i]==1)
+            for(int j=i*i; j<=1600; j+=i){
+                p[j]=0;
+            }
+    }
+    return p[n];
+}
 int pow10(int n)
 {
     int expo =1 ;
@@ -17,6 +32,40 @@ int pow10(int n)
         expo*=10;
     }
     return expo;
+}
+int mushMario(int &HP,int &level, int &phoenixdown){
+    int s1,j=99;
+    int n1 = ((level +phoenixdown)%5+1)*3;
+    while(n1--){
+        s1+=j;
+        j-=2;
+    }
+    HP = HP + (s1%100);
+    while(!isPrime(HP)){
+        HP++;
+    }
+    if(HP>MaxHP){
+        HP= MaxHP;
+    }
+    return HP;
+}
+int mushFibo(int &HP){
+    bool isfibo[1000];
+    int f[17];
+    f[1]=1;
+    f[2]=1;
+    for(int i=3 ;i<=16; i++){
+        f[i]=f[i-1]+f[i-2];
+    }
+    for(int i=1; i<=12; i++){
+        isfibo[f[i]]=true;
+    }
+    if(HP>1){
+        while(!isfibo[HP]){
+            HP--;
+        }
+    }
+    return HP;
 }
 void string2int(string s,int a[])
 {
@@ -126,7 +175,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     ifstream MyFile(file_input);
 
     MyFile>>HP>>level>>remedy>>maidenkiss>>phoenixdown;
-    int MaxHP = HP;
+    MaxHP = HP;
     int k=0;
     while(getline(MyFile,sukien))
     {
@@ -152,11 +201,33 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             break;
         isTiny--;
         isFrog--;
-        cout<<isFrog<<endl;
         if(event[i]<=7)
         {
             combat(event[i],HP,level,remedy,maidenkiss,phoenixdown,rescue,i+1);
         }
+        else{
+            if(event[i]  ==11){
+                HP = mushMario(HP,level,phoenixdown);
+            }
+            if(event[i]==12){
+                HP = mushFibo(HP);
+            }
+            if(event[i]==13){
+
+            }
+        }
+        ///thu cai switch
+        /*switch(event[i]){
+            case 11:
+                mushMario(HP,level,phoenixdown);
+                break;
+            case 12:
+                mushFibo(HP);
+                break;
+            case 13:
+
+
+        }*/
         if(HP<=0)
         {
             if(phoenixdown<=0)
