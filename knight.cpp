@@ -17,7 +17,7 @@ int pow10(int n){
     return expo;
 }
 void string2int(string s,int a[]){
-    int i=0,e=0;
+    int i=0,e=0,tmp;
     for(int i=0; i<s.size(); i++){
         a[i]=0;
     }
@@ -32,6 +32,12 @@ void string2int(string s,int a[]){
         }
     }
     number_of_events = i+1;
+    for(int k=0,j=number_of_events-1; k<number_of_events/2; k++){
+        tmp = a[j];
+        a[j]=a[k];
+        a[k]=tmp;
+        j--;
+    }
 }
 void increseLevel(int x, int &level)
 {
@@ -123,11 +129,13 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         if(k==3)
             break;
     }
-
-    for(int i=1; i<=number_of_events; i++)
+    for(int i=0; i<number_of_events; i++)
     {
+        if(event[i]<6){
+            combat(event[i],HP,level,remedy,maidenkiss,phoenixdown,rescue,i+1);
+        }
 
-        display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
+
         if(HP<=0)
         {
             if(phoenixdown<=0)
@@ -140,7 +148,17 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 HP = MaxHP;
             }
         }
+        if(rescue ==0 || rescue==1)
+            break;
+        display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
+
     }
-    cout<<"You win";
+    if(rescue==0){
+        cout<<"Game Over";
+    }
+    else {
+        if(rescue==1)
+            cout<<"You win";
+    }
 
 }
