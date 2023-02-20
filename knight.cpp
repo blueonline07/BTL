@@ -67,6 +67,44 @@ int mushFibo(int &HP){
     }
     return HP;
 }
+void mushGhost(int &HP,int event,string pack){
+    ifstream file(pack);//nho doi ten lai theo file tc1_input
+    int type[100];
+    int n2,arr[100];
+    int cnt=0;
+    file>>n2;
+    while(file>>arr[cnt]){
+        cnt++;
+        if(file.peek()==',')
+            file.ignore();
+    }
+    cnt=0;
+    while(event!=13){
+        type[cnt]=event%10;
+        event/=10;
+        cnt++;
+    }
+    while(cnt--){
+        if(type[cnt]==1){
+            int maxx=0, minn = 1e9,maxi,mini;
+            for(int i=0; i<n2; i++){
+                if(arr[i]<minn){
+                    minn = arr[i];
+                    mini = i;
+                }
+                if(arr[i]> maxx){
+                    maxx = arr[i];
+                    maxi=i;
+                }
+            }
+            HP = HP - (maxi + mini);
+        }
+        if(type[cnt]==2){
+
+        }
+    }
+
+}
 void string2int(string s,int a[])
 {
     int i=0,e=0,tmp;
@@ -98,11 +136,11 @@ void string2int(string s,int a[])
 }
 void increseLevel(int x, int &level)
 {
-    if(level<10)
+    if((level+ x )<=10)
     {
         level = level + x;
     }
-    if(level >= 10)
+    if((level + x) > 10)
     {
         level = 10;
     }
@@ -212,8 +250,8 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             if(event[i]==12){
                 HP = mushFibo(HP);
             }
-            if(event[i]==13){
-
+            if(event[i]>99){
+                mushGhost(HP,event[i],"tc1_mush_ghost");
             }
         }
         ///thu cai switch
@@ -228,6 +266,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
 
 
         }*/
+
         if(HP<=0)
         {
             if(phoenixdown<=0)
@@ -257,10 +296,9 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         if(isTiny==0)
         {
             HP = HP*5;
-            if(HP>MaxHP)
-            {
-                HP = MaxHP;
-            }
+        }
+        if(HP>MaxHP){
+            HP = MaxHP;
         }
         if(i==number_of_events-1 && HP>0)
             rescue=1;
