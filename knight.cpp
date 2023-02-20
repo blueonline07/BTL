@@ -1,5 +1,9 @@
 #include "knight.h"
 int number_of_events,isTiny=-1,isFrog=-1,currentLevel,MaxHP;
+int r1,c1,potion[1000][1000]; //asclepius
+int n9; //merlin
+bool had_met_asclepius=false;
+bool had_met_merlin = false;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -68,9 +72,9 @@ int mushFibo(int &HP){
     return HP;
 }
 void mushGhost(int &HP,int event,string pack){
-    ifstream file(pack);//nho doi ten lai theo file tc1_input
+    ifstream file(pack);
     int type[100];
-    int n2,arr[100];
+    int n2,arr[100],x[100];
     int cnt=0;
     file>>n2;
     while(file>>arr[cnt]){
@@ -78,32 +82,126 @@ void mushGhost(int &HP,int event,string pack){
         if(file.peek()==',')
             file.ignore();
     }
+    for(int i=0; i<n2;i++){
+        if(arr[i]<0){
+            x[i]=-arr[i];
+        }
+        x[i]=(17*arr[i]+9)%257;
+    }
     cnt=0;
     while(event!=13){
         type[cnt]=event%10;
         event/=10;
         cnt++;
     }
+    int maxx,minn;
     while(cnt--){
         if(type[cnt]==1){
-            int maxx=0, minn = 1e9,maxi,mini;
+            maxx=0, minn = 1e9;
+            int maxi,mini;
             for(int i=0; i<n2; i++){
                 if(arr[i]<minn){
-                    minn = arr[i];
                     mini = i;
                 }
                 if(arr[i]> maxx){
-                    maxx = arr[i];
                     maxi=i;
                 }
             }
             HP = HP - (maxi + mini);
         }
-        if(type[cnt]==2){
+        if(type[cnt]==2){    ///chua code dinh nui
 
+        }
+        if(type[cnt]==3){
+            maxx=0,minn=1e9;
+            int maxi2,mini2;
+            for(int i=0; i<n2; i++){
+                if(x[i]<minn){
+                    mini2=i;
+                }
+                if(x[i]>maxx){
+                    maxi2=i;
+                }
+            }
+            HP = HP - (maxi2+mini2);
+        }
+        if(type[cnt]==4){
+            maxx=0,minn=1e9;
+            int max2_3x,max2_3i;
+            for(int i=0; i<3; i++){
+                if(x[i]<minn){
+                    minn = x[i];
+                }
+                if(x[i]>maxx){
+                    maxx=x[i];
+                }
+            }
+            bool exist_2nd=false;
+            for(int i=0; i<3; i++){
+                if(x[i]!=minn && x[i]!=maxx){
+                    max2_3x = x[i];
+                    max2_3i = i;
+                    exist_2nd = true;
+                }
+            }
+            if(!exist_2nd){
+                max2_3x = -5;
+                max2_3i = -7;
+            }
+            HP = HP - (max2_3i + max2_3x);
         }
     }
 
+}
+void meet_asclepius(int &remedy, int &maidenkiss, int &phoenixdown,string pack){
+    if(had_met_asclepius)
+        return;
+
+    ifstream file(pack);
+    file>>r1>>c1;
+    for(int i=0; i<r1; i++){
+        for(int j=0; j<c1; j++){
+            file>>potion[i][j];
+        }
+    }
+
+    int limit=3;
+    for(int i=0; i<r1; i++){
+        limit = 3;
+        for(int j=0; j<c1; j++){
+            if(limit){
+                if(potion[i][j]==16){
+                    remedy++;
+                    limit--;
+                }
+                if(potion[i][j]==17){
+                    maidenkiss++;
+                    limit--;
+                }
+                if(potion[i][j]==18){
+                    phoenixdown++;
+                    limit--;
+                }
+            }
+        }
+    }
+    had_met_asclepius=true;
+}
+void meet_merlin(int &HP,string pack){
+    if(had_met_merlin)
+        return;
+    ifstream file(pack);
+    string merlin_items;
+    file>>n9;
+    while(n9--){
+        file>>merlin_items;
+        if(merlin_items=="Merlin" || merlin_items=="merlin"){
+            HP = HP +3;
+        }
+        else
+            HP = HP + 2;
+    }
+    had_met_merlin = true;
 }
 void string2int(string s,int a[])
 {
@@ -151,7 +249,6 @@ void combat(int &event,int &HP,int &level,int &remedy,int &maidenkiss,int &phoen
     float baseDamage[5]= {1,1.5,4.5,7.5,9.5};
     b = i%10;
     levelO = i>6?(b>5?b:5):b;
-    //cout<<level<<" "<<levelO<<endl;
     if(level > levelO)
     {
         if(event <6)
@@ -208,37 +305,36 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     //string s,s_stats,s_events,files;
     rescue = -1;
     int event[100];
-    int khoangtrang=0;
-    string sukien,filee,mush_ghost,aclepius,merlin;
+    string s_event,files,mush_ghost,asclepius,merlin;
     ifstream MyFile(file_input);
 
     MyFile>>HP>>level>>remedy>>maidenkiss>>phoenixdown;
     MaxHP = HP;
     int k=0;
-    while(getline(MyFile,sukien))
+    while(getline(MyFile,s_event))
     {
         k++;
         if(k==2)
             break;
     }
-    string2int(sukien,event);
-    MyFile>>filee;
+    string2int(s_event,event);
+    MyFile>>files;
     k=0;
     int n=0;
-    while(filee[n]!='\0'){
+    while(files[n]!='\0'){
         n++;
     }
     for(int i=0; i<n; i++){
-        if(filee[i]==','){
+        if(files[i]==','){
             k++;
             continue;
         }
         if(k==0)
-            aclepius += filee[i];
+            asclepius += files[i];
         if(k==1)
-            merlin +=filee[i];
+            merlin +=files[i];
         if(k==2)
-            mush_ghost +=filee[i];
+            mush_ghost +=files[i];
     }
     for(int i=0; i<number_of_events; i++)
     {
@@ -264,20 +360,22 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             if(event[i]>99){
                 mushGhost(HP,event[i],mush_ghost);
             }
+            if(event[i] ==15){
+                remedy ++;
+            }
+            if(event[i]==16){
+                maidenkiss++;
+            }
+            if(event[i]==17){
+                phoenixdown++;
+            }
+            if(event[i]==18){
+                meet_merlin(HP,merlin);
+            }
+            if(event[i]==19){
+                meet_asclepius(remedy,maidenkiss,phoenixdown,asclepius);
+            }
         }
-        ///thu cai switch
-        /*switch(event[i]){
-            case 11:
-                mushMario(HP,level,phoenixdown);
-                break;
-            case 12:
-                mushFibo(HP);
-                break;
-            case 13:
-
-
-        }*/
-
         if(HP<=0)
         {
             if(phoenixdown<=0)
@@ -292,11 +390,11 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 isTiny = -1;
             }
         }
-        if(remedy>0){
+        if(remedy>0 && isTiny >0){
             remedy--;
             isTiny=0;
         }
-        if(maidenkiss>0){
+        if(maidenkiss>0 && isFrog>0){
             maidenkiss--;
             isFrog=0;
         }
@@ -316,6 +414,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
 
     }
+    ///nho xoa may cai duoi
     if(rescue==0)
     {
         cout<<"Game Over";
