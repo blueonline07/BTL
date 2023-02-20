@@ -209,7 +209,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     rescue = -1;
     int event[100];
     int khoangtrang=0;
-    string sukien,filee;
+    string sukien,filee,mush_ghost,aclepius,merlin;
     ifstream MyFile(file_input);
 
     MyFile>>HP>>level>>remedy>>maidenkiss>>phoenixdown;
@@ -222,12 +222,23 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             break;
     }
     string2int(sukien,event);
-    while(getline(MyFile,filee))
-    {
-        k++;
-        //cout<<filee;
-        if(k==3)
-            break;
+    MyFile>>filee;
+    k=0;
+    int n=0;
+    while(filee[n]!='\0'){
+        n++;
+    }
+    for(int i=0; i<n; i++){
+        if(filee[i]==','){
+            k++;
+            continue;
+        }
+        if(k==0)
+            aclepius += filee[i];
+        if(k==1)
+            merlin +=filee[i];
+        if(k==2)
+            mush_ghost +=filee[i];
     }
     for(int i=0; i<number_of_events; i++)
     {
@@ -251,7 +262,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 HP = mushFibo(HP);
             }
             if(event[i]>99){
-                mushGhost(HP,event[i],"tc1_mush_ghost");
+                mushGhost(HP,event[i],mush_ghost);
             }
         }
         ///thu cai switch
