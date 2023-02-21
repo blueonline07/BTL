@@ -4,6 +4,8 @@ int r1,c1,potion[1000][1000]; //asclepius
 int n9; //merlin
 bool had_met_asclepius=false;
 bool had_met_merlin = false;
+bool king_arthur=false,lancelot=false;
+bool win;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -307,9 +309,14 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     int event[100];
     string s_event,files,mush_ghost,asclepius,merlin;
     ifstream MyFile(file_input);
-
     MyFile>>HP>>level>>remedy>>maidenkiss>>phoenixdown;
     MaxHP = HP;
+    if(MaxHP==999){
+        king_arthur=true;
+    }
+    if(isPrime(MaxHP)){
+        lancelot=true;
+    }
     int k=0;
     while(getline(MyFile,s_event))
     {
@@ -348,7 +355,18 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         isFrog--;
         if(event[i]<=7)
         {
-            combat(event[i],HP,level,remedy,maidenkiss,phoenixdown,rescue,i+1);
+            if(king_arthur||lancelot){
+                if(event[i]<6){
+                    increseLevel(1,level);
+                }
+                else {
+                    if(event[i]==6 || event[i]==7){
+                        increseLevel(2,level);
+                    }
+                }
+            }
+            else
+                combat(event[i],HP,level,remedy,maidenkiss,phoenixdown,rescue,i+1);
         }
         else{
             if(event[i]  ==11){
@@ -374,6 +392,29 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             }
             if(event[i]==19){
                 meet_asclepius(remedy,maidenkiss,phoenixdown,asclepius);
+            }
+            if(event[i]==99){
+                if(king_arthur){
+                    increseLevel(99,level);
+                    win = true;
+                }
+                else {
+                    if(lancelot&&level>=8){
+                        increseLevel(99,level);
+                        win = true;
+                    }
+                    else
+                    {
+                        if(level==10){
+                            increseLevel(99,level);
+                            win = true;
+                        }
+                    }
+                }
+                if(!win){
+                    rescue=0;
+                }
+
             }
         }
         if(HP<=0)
