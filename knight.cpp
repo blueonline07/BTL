@@ -4,7 +4,7 @@ const int MAX_LEVEL = 99;
 const int MAX_REMEDY = 99;
 const int MAX_MAIDENKISS = 99;
 const int MAX_PHOENIXDOWN = 99;
-int number_of_events,isTiny=-1,isFrog=-1,currentLevel,HPMax;
+
 int n9; //merlin
 int potion[1000][1000],r1,c1;  //asclepius
 bool had_met_asclepius=false;
@@ -293,7 +293,7 @@ void meet_merlin(int &HP,string pack)
     while(n9--)
     {
         file>>merlin_items;
-        if(merlin_items.find("merlin")>=0 && merlin_items.find("merlin")<merlin_items.size()||merlin_items.find("Merlin")>=0 && merlin_items.find("Merlin")<merlin_items.size())
+        if((merlin_items.find("merlin")>=0 && merlin_items.find("merlin")<merlin_items.size())||(merlin_items.find("Merlin")>=0 && merlin_items.find("Merlin")<merlin_items.size()))
         {
             HP = HP +3;
         }
@@ -326,7 +326,7 @@ void meet_merlin(int &HP,string pack)
     }
     had_met_merlin = true;
 }
-void string2int(string s,int a[])
+void string2int(string s,int a[],int &number_of_events)
 {
     int i=0,e=0,tmp;
     for(int i=0; i<s.size(); i++)
@@ -369,7 +369,7 @@ void increseLevel(int x, int &level)
 void combat(int &event,int &HP,int &level, int i,int &isTiny, int &isFrog,int &currentLevel)
 {
     int levelO,b,damage;
-    float baseDamage[5]= {1,1.5,4.5,7.5,9.5};
+    float baseDamage[10]= {1,1.5,4.5,7.5,9.5,0,0,0,0,0};
     b = i%10;
     levelO = i>6?(b>5?b:5):b;
     if(level > levelO)
@@ -421,13 +421,15 @@ void combat(int &event,int &HP,int &level, int i,int &isTiny, int &isFrog,int &c
             }
         }
     }
+    return;
 }
 
 void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, int & maidenkiss, int & phoenixdown, int & rescue)
 {
+    int number_of_events,isTiny=-1,isFrog=-1,currentLevel,HPMax;
     //string s,s_stats,s_events,files;
     rescue = -1;
-    int event[100];
+    int event[1000];
     string s_event,files,mush_ghost,asclepius,merlin;
     ifstream MyFile(file_input);
     MyFile>>HP>>level>>remedy>>maidenkiss>>phoenixdown;
@@ -447,7 +449,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         if(k==2)
             break;
     }
-    string2int(s_event,event);
+    string2int(s_event,event,number_of_events);
     MyFile>>files;
     k=0;
     int n=0;
