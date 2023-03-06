@@ -356,7 +356,7 @@ void meet_merlin(int &HP,string pack)
     }
     had_met_merlin = true;
 }
-void string2int(string s,int a[],int &number_of_events)
+void string2int(string s,int a[])
 {
     int i=0,e=0,tmp;
     for(int i=0; i<s.size(); i++)
@@ -489,7 +489,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         if(k==2)
             break;
     }
-    string2int(s_event,event,number_of_events);
+    string2int(s_event,event);
     MyFile>>files;
     k=0;
     int n=0;

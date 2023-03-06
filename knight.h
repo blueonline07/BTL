@@ -14,5 +14,5 @@ int mushFibo(int &HP);
 void mushGhost(int &HP,int & phoenixdown, int &rescue,int event,string pack);
 void meet_asclepius(int &remedy, int &maidenkiss, int &phoenixdown,string pack);
 void meet_merlin(int &HP,string pack);
-void string2int(string s,int a[],int &number_of_events);
+void string2int(string s,int a[]);
 #endif // __KNIGHT_H__
