@@ -652,10 +652,10 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             {
                 maidenkiss = MAX_MAIDENKISS;
             }
-            if(i==number_of_events-1 && HP>0)
-                rescue=1;
-        }
 
+        }
+        if(i==number_of_events-1 && HP>0)
+            rescue=1;
         display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
         if(rescue==1 || rescue==0)
         {
