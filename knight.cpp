@@ -85,6 +85,7 @@ int mushFibo(int &HP)
     }
     if(HP>1)
     {
+        HP--;
         while(!isfibo[HP])
         {
             HP--;
@@ -92,7 +93,7 @@ int mushFibo(int &HP)
     }
     return HP;
 }
-void mushGhost(int &HP,int event,string pack)
+void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
 {
     ifstream file(pack);
     int type[100];
@@ -239,6 +240,16 @@ void mushGhost(int &HP,int event,string pack)
             }
             HP = HP - (max2_3i + max2_3x);
         }
+        if(HP<=0){
+            if(phoenixdown>0){
+                phoenixdown--;
+                HP = HPMax;
+            }
+            else {
+                rescue = 0;
+                return;
+            }
+        }
     }
 }
 void meet_asclepius(int &remedy, int &maidenkiss, int &phoenixdown,string pack)
@@ -314,7 +325,7 @@ void meet_merlin(int &HP,string pack)
         else
         {
             bool good = true;
-            int ch[6];
+            int ch[6]={0,0,0,0,0,0};
             for(int i=0; i<merlin_items.size(); i++)
             {
                 if(merlin_items[i]=='m' || merlin_items[i]=='M')
@@ -542,7 +553,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 }
                 if(event[i]>99)
                 {
-                    mushGhost(HP,event[i],mush_ghost);
+                    mushGhost(HP,phoenixdown,rescue,event[i],mush_ghost);
                 }
                 if(event[i] ==15)
                 {
@@ -610,36 +621,41 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 isTiny = -1;
             }
         }
-        if(remedy>0 && isTiny >0)
-        {
-            remedy--;
-            isTiny=0;
+        else{
+            if(remedy>0 && isTiny >0)
+            {
+                remedy--;
+                isTiny=0;
+            }
+            if(maidenkiss>0 && isFrog>0)
+            {
+                maidenkiss--;
+                isFrog=0;
+            }
+            if(isFrog==0)
+            {
+                level = currentLevel;
+            }
+            if(isTiny==0)
+            {
+                HP = HP*5;
+            }
+            if(HP>HPMax)
+            {
+                HP = HPMax;
+            }
+            if(remedy>MAX_REMEDY)
+            {
+                remedy = MAX_REMEDY;
+            }
+            if(maidenkiss>MAX_MAIDENKISS)
+            {
+                maidenkiss = MAX_MAIDENKISS;
+            }
+            if(i==number_of_events-1 && HP>0)
+                rescue=1;
         }
-        if(maidenkiss>0 && isFrog>0)
-        {
-            maidenkiss--;
-            isFrog=0;
-        }
-        if(isFrog==0)
-        {
-            level = currentLevel;
-        }
-        if(isTiny==0)
-        {
-            HP = HP*5;
-        }
-        if(HP>HPMax)
-        {
-            HP = HPMax;
-        }
-        if(remedy>MAX_REMEDY){
-            remedy = MAX_REMEDY;
-        }
-        if(maidenkiss>MAX_MAIDENKISS){
-            maidenkiss = MAX_MAIDENKISS;
-        }
-        if(i==number_of_events-1 && HP>0)
-            rescue=1;
+
         display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
         if(rescue==1 || rescue==0)
         {
