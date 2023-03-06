@@ -1,16 +1,16 @@
 #include "knight.h"
 
-const int MAX_LEVEL = 99;
+const int MAX_LEVEL = 10;
 const int MAX_REMEDY = 99;
 const int MAX_MAIDENKISS = 99;
 const int MAX_PHOENIXDOWN = 99;
-
+int number_of_events,isTiny=-1,isFrog=-1,currentLevel,HPMax;
 int n9; //merlin
 int potion[1000][1000],r1,c1;  //asclepius
 bool had_met_asclepius=false;
 bool had_met_merlin = false;
 bool king_arthur=false,lancelot=false;
-bool win;
+bool winBowser=false;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -50,7 +50,7 @@ int pow10(int n)
 }
 int mushMario(int &HP,int &level, int &phoenixdown)
 {
-    int s1,j=99;
+    int s1=0,j=99;
     int n1 = ((level +phoenixdown)%5+1)*3;
     while(n1--)
     {
@@ -58,6 +58,7 @@ int mushMario(int &HP,int &level, int &phoenixdown)
         j-=2;
     }
     HP = HP + (s1%100);
+    HP++;
     while(!isPrime(HP))
     {
         HP++;
@@ -74,7 +75,11 @@ int mushFibo(int &HP)
     {
         f[i]=f[i-1]+f[i-2];
     }
-    for(int i=1; i<=12; i++)
+    for(int i=0; i<=1000; i++)
+    {
+        isfibo[i]=false;
+    }
+    for(int i=1; i<=16; i++)
     {
         isfibo[f[i]]=true;
     }
@@ -125,12 +130,12 @@ void mushGhost(int &HP,int event,string pack)
             int maxi,mini;
             for(int i=0; i<n2; i++)
             {
-                if(arr[i]<minn)
+                if(arr[i]<=minn)
                 {
                     minn = arr[i];
                     mini = i;
                 }
-                if(arr[i]> maxx)
+                if(arr[i]>= maxx)
                 {
                     maxx = arr[i];
                     maxi=i;
@@ -152,14 +157,23 @@ void mushGhost(int &HP,int event,string pack)
                     }
                     up = true;
                 }
-                if(arr[i]<arr[i-1])
+                else
                 {
-                    if(up)
+                    if(arr[i]<arr[i-1])
                     {
-                        index = i-1;
+                        if(up)
+                        {
+                            index = i-1;
+                        }
+                        up = false;
                     }
-                    up = false;
+                    else
+                    {
+                        is_mountain = false;
+                    }
                 }
+
+
             }
             if(is_mountain)
             {
@@ -297,10 +311,12 @@ void meet_merlin(int &HP,string pack)
         {
             HP = HP +3;
         }
-        else {
+        else
+        {
             bool good = true;
             int ch[6];
-            for(int i=0; i<merlin_items.size(); i++){
+            for(int i=0; i<merlin_items.size(); i++)
+            {
                 if(merlin_items[i]=='m' || merlin_items[i]=='M')
                     ch[0]++;
                 if(merlin_items[i]=='e' || merlin_items[i]=='E')
@@ -314,12 +330,15 @@ void meet_merlin(int &HP,string pack)
                 if(merlin_items[i]=='n' || merlin_items[i]=='N')
                     ch[5]++;
             }
-            for(int i=0; i<6; i++){
-                if(ch[i]==0){
+            for(int i=0; i<6; i++)
+            {
+                if(ch[i]==0)
+                {
                     good = false;
                 }
             }
-            if(good){
+            if(good)
+            {
                 HP +=2;
             }
         }
@@ -357,19 +376,20 @@ void string2int(string s,int a[],int &number_of_events)
 }
 void increseLevel(int x, int &level)
 {
-    if((level+ x )<=10)
+
+    if((level+ x )<=MAX_LEVEL)
     {
         level = level + x;
     }
-    if((level + x) > MAX_LEVEL)
+    else
     {
         level = MAX_LEVEL;
     }
 }
-void combat(int &event,int &HP,int &level, int i,int &isTiny, int &isFrog,int &currentLevel)
+void combat(int &event,int &HP,int &level,int &remedy, int &maidenkiss, int i,int &isTiny, int &isFrog,int &currentLevel)
 {
     int levelO,b,damage;
-    float baseDamage[10]= {1,1.5,4.5,7.5,9.5,0,0,0,0,0};
+    float baseDamage[]= {1,1.5,4.5,7.5,9.5,0,0};
     b = i%10;
     levelO = i>6?(b>5?b:5):b;
     if(level > levelO)
@@ -382,7 +402,7 @@ void combat(int &event,int &HP,int &level, int i,int &isTiny, int &isFrog,int &c
         {
             if(event==6 || event ==7)
             {
-                if(isTiny==0 && isFrog==0)
+                if(isTiny<=0 && isFrog<=0)
                     increseLevel(2,level);
             }
         }
@@ -397,36 +417,45 @@ void combat(int &event,int &HP,int &level, int i,int &isTiny, int &isFrog,int &c
             {
                 if(isTiny<=0&&isFrog<=0)
                 {
-
-                    isTiny = 3;
-                    if(HP<5)
+                    if(remedy>0)
                     {
-                        HP = 1;
+                        remedy--;
                     }
                     else
-                        HP = HP/5;
-
-
+                    {
+                        isTiny = 3;
+                        if(HP<5)
+                        {
+                            HP = 1;
+                        }
+                        else
+                            HP = HP/5;
+                    }
                 }
             }
             if(event==7)
             {
                 if(isTiny<=0 && isFrog<=0)
                 {
+                    if(maidenkiss>0)
+                    {
+                        maidenkiss --;
+                    }
+                    else
+                    {
+                        isFrog=3;
+                        currentLevel = level;
+                        level =1;
+                    }
 
-                    isFrog=3;
-                    currentLevel = level;
-                    level =1;
                 }
             }
         }
     }
-    return;
 }
 
 void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, int & maidenkiss, int & phoenixdown, int & rescue)
 {
-    int number_of_events,isTiny=-1,isFrog=-1,currentLevel,HPMax;
     //string s,s_stats,s_events,files;
     rescue = -1;
     int event[1000];
@@ -499,7 +528,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                     }
                 }
                 else
-                    combat(event[i],HP,level,i+1,isTiny,isFrog,currentLevel);
+                    combat(event[i],HP,level,remedy,maidenkiss,i+1,isTiny,isFrog,currentLevel);
             }
             else
             {
@@ -540,25 +569,25 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                     if(king_arthur)
                     {
                         increseLevel(99,level);
-                        win = true;
+                        winBowser = true;
                     }
                     else
                     {
                         if(lancelot&&level>=8)
                         {
                             increseLevel(99,level);
-                            win = true;
+                            winBowser = true;
                         }
                         else
                         {
                             if(level==10)
                             {
                                 increseLevel(99,level);
-                                win = true;
+                                winBowser = true;
                             }
                         }
                     }
-                    if(!win)
+                    if(!winBowser)
                     {
                         rescue=0;
                     }
@@ -603,7 +632,12 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         {
             HP = HPMax;
         }
-
+        if(remedy>MAX_REMEDY){
+            remedy = MAX_REMEDY;
+        }
+        if(maidenkiss>MAX_MAIDENKISS){
+            maidenkiss = MAX_MAIDENKISS;
+        }
         if(i==number_of_events-1 && HP>0)
             rescue=1;
         display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
