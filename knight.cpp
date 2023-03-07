@@ -235,10 +235,14 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
             }
             if(!exist_2nd)
             {
+                cout<<"ok chua ";
                 max2_3x = -5;
                 max2_3i = -7;
             }
             HP = HP - (max2_3i + max2_3x);
+        }
+        if(HP > HPMax){
+            HP = HPMax;
         }
         if(HP<=0){
             if(phoenixdown>0){
@@ -434,7 +438,7 @@ void combat(int &event,int &HP,int &level,int &remedy, int &maidenkiss, int i,in
                     }
                     else
                     {
-                        isTiny = 3;
+                        isTiny = 4;
                         if(HP<5)
                         {
                             HP = 1;
@@ -454,7 +458,7 @@ void combat(int &event,int &HP,int &level,int &remedy, int &maidenkiss, int i,in
                     }
                     else
                     {
-                        isFrog=3;
+                        isFrog=4;
                         currentLevel = level;
                         level =1;
                     }
@@ -513,8 +517,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     }
     for(int i=0; i<number_of_events; i++)
     {
-        isTiny--;
-        isFrog--;
+
         if(event[i]==0)
         {
             rescue=1;
@@ -606,7 +609,8 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                 }
             }
         }
-
+        isTiny--;
+        isFrog--;
         if(HP<=0)
         {
             if(phoenixdown<=0)
@@ -651,6 +655,9 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             if(maidenkiss>MAX_MAIDENKISS)
             {
                 maidenkiss = MAX_MAIDENKISS;
+            }
+            if(phoenixdown>MAX_PHOENIXDOWN){
+                phoenixdown = MAX_PHOENIXDOWN;
             }
 
         }
