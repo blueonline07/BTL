@@ -210,7 +210,7 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
         if(type[cnt]==4)
         {
             maxx=0,minn=1e9;
-            int max2_3x,max2_3i;
+            int max2_3x=0,max2_3i;
             for(int i=0; i<3; i++)
             {
                 if(x[i]<minn)
@@ -225,17 +225,19 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
             bool exist_2nd=false;
             for(int i=0; i<3; i++)
             {
-                if(x[i]!=minn && x[i]!=maxx)
+                if(x[i]<maxx)
                 {
-                    max2_3x = x[i];
-                    max2_3i = i;
-                    exist_2nd = true;
+                    if(max2_3x < x[i]){
+                        max2_3x = x[i];
+                        max2_3i = i;
+                        exist_2nd = true;
+                    }
+
                     // cout<<max2_3x<<" "<<max2_3i<<endl;
                 }
             }
             if(!exist_2nd)
             {
-                cout<<"ok chua ";
                 max2_3x = -5;
                 max2_3i = -7;
             }
