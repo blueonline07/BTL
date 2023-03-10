@@ -215,7 +215,9 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
         {
             maxx=0,minn=1e9;
             int max2_3x=0,max2_3i;
-            for(int i=0; i<3; i++)
+            int n;
+            (n2>=3)?(n=3):(n=n2);
+            for(int i=0; i<n; i++)
             {
                 if(x[i]<minn)
                 {
@@ -227,7 +229,7 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
                 }
             }
             bool exist_2nd=false;
-            for(int i=0; i<3; i++)
+            for(int i=0; i<n; i++)
             {
                 if(x[i]<maxx)
                 {
@@ -236,8 +238,6 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
                         max2_3i = i;
                         exist_2nd = true;
                     }
-
-                    // cout<<max2_3x<<" "<<max2_3i<<endl;
                 }
             }
             if(!exist_2nd)
@@ -410,7 +410,7 @@ void increseLevel(int x, int &level)
 void combat(int &event,int &HP,int &level,int &remedy, int &maidenkiss, int i,int &isTiny, int &isFrog,int &currentLevel)
 {
     int levelO,b,damage;
-    float baseDamage[]= {1,1.5,4.5,7.5,9.5,0,0};
+    float baseDamage[7]= {1,1.5,4.5,7.5,9.5,0,0};
     b = i%10;
     levelO = i>6?(b>5?b:5):b;
     if(level > levelO)
