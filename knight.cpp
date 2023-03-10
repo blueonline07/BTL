@@ -100,6 +100,10 @@ void mushGhost(int &HP,int & phoenixdown, int &rescue, int event,string pack)
     int n2,arr[100],x[100];
     int cnt=0;
     file>>n2;
+    for(int i=0; i<100; i++){
+        arr[i]=0;
+        x[i]=0;
+    }
     while(file>>arr[cnt])
     {
         cnt++;
@@ -523,6 +527,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         if(event[i]==0)
         {
             rescue=1;
+            goto end;
         }
 
         else
@@ -618,6 +623,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
             if(phoenixdown<=0)
             {
                 rescue=0;
+                goto end;
             }
             else
             {
@@ -665,7 +671,8 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
         }
         if(i==number_of_events-1 && HP>0)
             rescue=1;
-        display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
+        end:
+            display(HP,level,remedy,maidenkiss,phoenixdown,rescue);
         if(rescue==1 || rescue==0)
         {
             break;
